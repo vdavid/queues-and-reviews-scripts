@@ -2,7 +2,14 @@ This is a project to automate things around my Queues and Reviews sheet in Googl
 
 ## Environment
 
-Uses no inputs from script properties.
+Uses these inputs from script properties:
+
+- aylienApplicationID
+- aylienApplicationKey
+- existUsername
+- existPassword
+- goodreadsApiKey
+- omdbApiKey
 
 The target spreadsheet is [here](https://docs.google.com/spreadsheets/d/15ccFkUaWRUZtLk0C0dT8EN9qYWf_1aah0WoD4ii5rpQ/edit#).
 
