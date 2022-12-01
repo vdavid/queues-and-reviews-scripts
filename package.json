@@ -1,0 +1,16 @@
+{
+  "name": "airthings-sync-to-sheets",
+  "version": "1.0.0",
+  "description": "To sync data from my Airthings View Plus to Google Sheets",
+  "main": "Code.ts",
+  "author": "David Veszelovszki",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "push": "clasp push",
+    "watch": "clasp push --watch"
+  },
+  "dependencies": {
+    "@types/google-apps-script": "^1.0.56"
+  }
+}
