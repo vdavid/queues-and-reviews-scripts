@@ -1,64 +1,109 @@
-function OmdbDownloader(options) {
-    this.options = options || {};
-    this.options.firstLineIndex = this.options.firstLineIndex || 7;
+namespace OmdbDownloader {
+    import Range = GoogleAppsScript.Spreadsheet.Range
+    import Sheet = GoogleAppsScript.Spreadsheet.Sheet
 
-    this.fillMissingMovieInfoOnSheet = function (sheet) {
-        const movieData = sheet.getRange('B' + this.options.firstLineIndex + ':K').getValues();
+    interface OmdbResponse {
+        Title: string // "Matrix",
+        Year: string // "1993",
+        Rated: string // "N/A",
+        Released: string // "01 Mar 1993",
+        Runtime: string // "60 min",
+        Genre: string // "Action, Drama, Fantasy",
+        Director: string // "N/A",
+        Writer: string // "Donald Case",
+        Actors: string // "Nick Manner, Phillip Jarrett, Carrie-Anne Moss",
+        Plot: string // "Steven Matrix is one of the underworld's foremost...",
+        Language: string // "English",
+        Country: string // "Canada",
+        Awards: string // "1 win",
+        Poster: string // "https://m.media-amazon.com/images/M/MV5BYzUzOTA5ZTMtMTdlZS00MmQ5LWFmNjEtMjE5MTczN2RjNjE3XkEyXkFqcGdeQXVyNTc2ODIyMzY@._V1_SX300.jpg",
+        Ratings: {
+            Source: string // "Internet Movie Database"
+            Value: string // "7.7/10"
+        }[]
+        Metascore: string // "N/A",
+        imdbRating: string // "7.7",
+        imdbVotes: string // "196",
+        imdbID: string // "tt0106062",
+        Type: string // "series",
+        totalSeasons: string // "N/A",
+        Response: string // "True"
+    }
+
+    export function fillMissingMovieInfoOnSheet(
+        apiKey: string,
+        firstLineIndex: number,
+        backgroundColor: string,
+        sheet: Sheet
+    ): void {
+        const movieData = sheet.getRange(`B${firstLineIndex}:K`).getValues() as string[][]
         for (let rowIndex = 0; rowIndex < movieData.length; rowIndex++) {
-            const englishTitle = movieData[rowIndex][0];
-            const originalTitle = movieData[rowIndex][1];
-            const year = movieData[rowIndex][3];
-            const imdbId = getImdbId(movieData[rowIndex][9]);
+            const englishTitle = movieData[rowIndex][0]
+            const originalTitle = movieData[rowIndex][1]
+            const year = movieData[rowIndex][3]
+            const imdbId = getImdbId(movieData[rowIndex][9])
 
             if (englishTitle && !originalTitle) {
-                fillMovieInfo.call(this, englishTitle, year, imdbId, sheet.getRange(this.options.firstLineIndex + rowIndex, 3, 1, 11));
+                fillMovieInfo(
+                    apiKey,
+                    backgroundColor,
+                    sheet.getRange(firstLineIndex + rowIndex, 3, 1, 11),
+                    englishTitle,
+                    year,
+                    imdbId
+                )
             }
         }
-    };
+    }
 
-    /**
-     * @param {string} title
-     * @param {string?} year
-     * @param {string?} imdbId If set, then title and year won't be used.
-     */
-    function fillMovieInfo(title, year, imdbId, dataRangeToSet) {
-        const omdbData = downloadOmdbDataForMovie.call(this, title, year, imdbId);
-        const cellValues = convertOmdbDataToCellValues.call(this, omdbData);
-        if (cellValues[0] !== '') {
-            dataRangeToSet.setValues([cellValues]);
-            dataRangeToSet.setBackground(this.options.backgroundColor);
+    // If imdbId is set, title and year won't be used.
+    function fillMovieInfo(
+        apiKey: string,
+        bgColor: string,
+        target: Range,
+        title?: string,
+        year?: string,
+        imdbId?: string
+    ): void {
+        const omdbData = downloadOmdbDataForMovie(apiKey, title, year, imdbId)
+        const cellValues = toCellValues(omdbData)
+        if (cellValues[0] === '') {
+            target.getCell(1, 1).setValue('NOT FOUND :(')
+            target.getCell(1, 1).setBackground(bgColor)
         } else {
-            dataRangeToSet.getCell(1, 1).setValue('NOT FOUND :(');
-            dataRangeToSet.getCell(1, 1).setBackground(this.options.backgroundColor);
+            target.setValues([cellValues])
+            target.setBackground(bgColor)
         }
     }
 
-    function downloadOmdbDataForMovie(title?: string, year?: string, imdbId?: string) {
-        let url = `https://www.omdbapi.com/?apikey=${this.options.apiKey}${title ? `&t=${title}` : ''}${year ? `&y=${year}` : ''}${imdbId ? `&i=${imdbId}` : ''}`
-        return JSON.parse(UrlFetchApp.fetch(url).getContentText());
+    function downloadOmdbDataForMovie(apiKey: string, title?: string, year?: string, imdbId?: string): OmdbResponse {
+        const url = `https://www.omdbapi.com/?apikey=${apiKey}${title ? `&t=${title}` : ''}${year ? `&y=${year}` : ''}${
+            imdbId ? `&i=${imdbId}` : ''
+        }`
+        return JSON.parse(UrlFetchApp.fetch(url).getContentText())
     }
 
-    function convertOmdbDataToCellValues(omdbData) {
+    function toCellValues(omdbData: OmdbResponse): (string | number)[] {
         return [
-            omdbData.Title ? omdbData.Title : '',
+            omdbData.Title ?? '',
             '',
-            omdbData.Year ? omdbData.Year : '',
+            omdbData.Year ?? '',
             replaceCommasWithPipes(omdbData.Director),
             replaceCommasWithPipes(omdbData.Actors),
             replaceCommasWithPipes(omdbData.Genre),
             replaceCommasWithPipes(omdbData.Country),
             replaceCommasWithPipes(omdbData.Language),
-            omdbData.imdbID ? 'https://www.imdb.com/title/' + omdbData.imdbID + '/' : '',
-            omdbData.Runtime ? omdbData.Runtime.replace(/[^\d]+/g, '') : '',
-            omdbData.imdbRating ? omdbData.imdbRating : '',
-        ];
+            omdbData.imdbID ? `https://www.imdb.com/title/${omdbData.imdbID}/` : '',
+            omdbData.Runtime ? omdbData.Runtime.replace(/\D+/g, '') : '',
+            omdbData.imdbRating ?? '',
+        ]
     }
 
-    function replaceCommasWithPipes(string) {
-        return string ? string.replace(/, /g, ' | ', string) : '';
+    function replaceCommasWithPipes(string: string): string {
+        return string ? string.replace(/, /g, ' | ') : ''
     }
 
-    function getImdbId(imdbLink) {
-        return imdbLink.indexOf('/title/') > -1 ? imdbLink.slice(imdbLink.indexOf('/title/') + '/title/'.length, -1) : null;
+    function getImdbId(imdbLink: string): string | null {
+        return imdbLink.includes('/title/') ? imdbLink.slice(imdbLink.indexOf('/title/') + '/title/'.length, -1) : null
     }
 }
