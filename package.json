@@ -1,7 +1,7 @@
 {
-  "name": "airthings-sync-to-sheets",
+  "name": "queues-and-reviews-scripts",
   "version": "1.0.0",
-  "description": "To sync data from my Airthings View Plus to Google Sheets",
+  "description": "Automates common tasks around my Queues and Reviews sheet in Google Sheets",
   "main": "Code.ts",
   "author": "David Veszelovszki",
   "license": "MIT",
