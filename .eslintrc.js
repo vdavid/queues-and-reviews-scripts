@@ -37,10 +37,6 @@ module.exports = {
         name: ['test', 'only'],
         message: "Don't forget to remove .only before committing",
       },
-      {
-        name: ['jest', 'fn'],
-        message: 'Use sinon.spy(() => undefined) instead',
-      },
     ],
     'no-restricted-imports': [
       'error',
@@ -238,7 +234,6 @@ module.exports = {
 
     // Previous Rules that has been causing errors after upgrading
     'unicorn/consistent-function-scoping': 'off',
-    'rxjs/no-nested-subscribe': 'off',
     // End
   },
   overrides: [
@@ -348,7 +343,7 @@ module.exports = {
         // '@typescript-eslint/restrict-template-expressions': ['error', { allowNumber: true, allowBoolean: true }],
         '@typescript-eslint/restrict-template-expressions': 'off',
         '@typescript-eslint/return-await': 'error',
-        '@typescript-eslint/unbound-method': 'error',
+        '@typescript-eslint/unbound-method': 'off',
         '@typescript-eslint/unified-signatures': 'error',
 
         'import/no-unresolved': 'off',
@@ -375,7 +370,6 @@ module.exports = {
       files: '*.@(test|story).ts?(x)',
       rules: {
         '@typescript-eslint/explicit-function-return-type': 'off',
-        'rxjs/no-ignored-subscription': 'warn',
         'unicorn/consistent-function-scoping': 'off',
       },
     },

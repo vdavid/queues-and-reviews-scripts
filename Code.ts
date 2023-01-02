@@ -1,3 +1,6 @@
+import { ExistDownloader } from './ExistDownloader'
+import { ExistRepository } from './ExistRepository'
+
 const aylienApplicationID = PropertiesService.getScriptProperties().getProperty('aylienApplicationID')
 const aylienApplicationKey = PropertiesService.getScriptProperties().getProperty('aylienApplicationKey')
 const existUsername = PropertiesService.getScriptProperties().getProperty('existUsername')
@@ -7,7 +10,7 @@ const omdbApiKey = PropertiesService.getScriptProperties().getProperty('omdbApiK
 
 const backgroundColor = '#d88'
 
-// noinspection JSUnusedGlobalSymbols
+// noinspection JSUnusedLocalSymbols
 function onOpen(): void {
     SpreadsheetApp.getUi()
         .createMenu('Scripts')
@@ -59,5 +62,7 @@ function fillMissingBookInfo(): void {
 
 function fillExistDiaryItems(): void {
     const token = ExistRepository.doSimpleTokenAuthentication(existUsername, existPassword)
-    ExistDownloader.fillMissingDatesOnSheet(SpreadsheetApp.getActive().getSheetByName('Exist'), token, 14)
+    const sheet = SpreadsheetApp.getActive().getSheetByName('Exist')
+    const attributeLists = ExistRepository.getAttributeLists(token, 'all', 14)
+    ExistDownloader.fillMissingDatesOnSheet(sheet, attributeLists)
 }
