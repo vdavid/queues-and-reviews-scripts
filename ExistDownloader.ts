@@ -22,20 +22,17 @@ export namespace ExistDownloader {
                     .getCell(Number(relativeRowIndex) + 1, 1)
                     .setValue(attributeLists[dateString].mood_note.value)
                 allTargetCells.getCell(Number(relativeRowIndex) + 1, 2).setValue(attributeLists[dateString].mood.value)
-                // Collect tags with non-zero values, into a string
-                const tags = collectTags(attributeLists, dateString)
+                const tags = collectTags(attributeLists[dateString])
                 allTargetCells.getCell(Number(relativeRowIndex) + 1, 3).setValue(tags)
             }
         }
     }
 
-    function collectTags(
-        attributeLists: { [p: string]: ExistRepository.AttributeListForDay },
-        dateString: string
-    ): string {
-        return Object.entries(attributeLists[dateString])
+    // Collects tags with non-zero values into a string
+    function collectTags(attributeList: ExistRepository.AttributeListForDay): string {
+        return Object.entries(attributeList)
             .filter(([, value]) => value.type === 'Boolean')
-            .filter(([, value]) => value.value === '1')
+            .filter(([, value]) => value.value === 1)
             .map(([key]) => key)
             .join(', ')
     }
