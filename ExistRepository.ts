@@ -116,7 +116,9 @@ export namespace ExistRepository {
     function convertDay(response: ExistAttributesApiResponse, isoDate: string): AttributeListForDay {
         const namesValues = response.results.map(item => ({
             name: item.name,
-            value: item.values.length ? item.values.find(value => value.date === isoDate).value : undefined,
+            value: item.values.length
+                ? (item.values.find(value => value.date === isoDate) || { value: undefined }).value
+                : undefined,
             type: item.value_type_description,
         }))
         const namesValuesFiltered = namesValues.filter(a => a.value !== undefined)
