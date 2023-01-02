@@ -1,4 +1,7 @@
-type ExistAttributesApiResponse = ExistAttribute[]
+interface ExistAttributesApiResponse {
+    next: string | null
+    results: ExistAttribute[]
+}
 
 interface ExistAttribute {
     group: {
@@ -6,28 +9,36 @@ interface ExistAttribute {
         label: string
         priority: number
     }
-    attribute: string
-    label: string
-    priority: number
-    value_type: number
+    template: string // e.g. "steps"
+    name: string // e.g. "steps"
+    label: string // e.g. "Steps"
+    priority: number // e.g. 1
+    manual: boolean
+    active: boolean
+    value_type: number // e.g. 1
     value_type_description: string // E.g. "Boolean"
-    service: string
-    values: {
-        value: string | number | null
-        date: string // YYYY-MM-DD
-    }[]
+    service: {
+        name: string // e.g. "googlefit"
+        label: string // e.g. "Google Fit"
+    }
+    values: [
+        {
+            date: string // YYYY-MM-DD
+            value: string | number | null
+        }
+    ]
 }
 
 export namespace ExistRepository {
     // Name (e.g. "cook") to value (e.g. "1") and type (e.g. "Boolean")
     export interface AttributeListForDay {
-        [key: ExistAttribute['attribute']]: {
+        [key: ExistAttribute['name']]: {
             value: ExistAttribute['values'][0]['value']
             type: ExistAttribute['value_type_description']
         }
     }
 
-    const baseUrl = 'https://exist.io/api/1/'
+    const baseUrl = 'https://exist.io/api/2/'
 
     export function doSimpleTokenAuthentication(username: string, password: string): string {
         const response = UrlFetchApp.fetch(baseUrl + 'auth/simple-token/', {
@@ -48,37 +59,64 @@ export namespace ExistRepository {
         lastDate: Date = new Date()
     ): { [dateAsIsoString: string]: AttributeListForDay } {
         const results = {}
-        const date = lastDate
+        const currentDate = lastDate
+        const batchSize = Math.min(dayCount, 30)
         while (Object.keys(results).length < dayCount) {
-            const dateAsIsoString = date.toISOString().slice(0, 10)
-            const url = assembleAttributeUrl(attributeNames, dateAsIsoString)
-            const response = fetchUrlViaHttpGetWithToken(url, token)
-            const attributeListForDay = convertDay(response)
-            if (!Object.keys(attributeListForDay).length) {
-                break
+            // Assemble URL
+            const url = assembleAttributeUrl(attributeNames, currentDate.toISOString().slice(0, 10), batchSize)
+
+            // Fetch data for the next batch of days
+            const response = fetchAllPages(url, token)
+            const daysInResponse: string[] = response.results
+                .map(result => result.values.map(value => value.date))
+                .flat()
+                .filter((value, index, self) => self.indexOf(value) === index)
+            for (const isoDate of daysInResponse) {
+                const attributeListForDay = convertDay(response, isoDate)
+                if (!Object.keys(attributeListForDay).length) {
+                    break
+                }
+                results[isoDate] = attributeListForDay
             }
-            results[date.toISOString().slice(0, 10)] = attributeListForDay
-            date.setDate(date.getDate() - 1)
+
+            // Move on to the next batch of days
+            currentDate.setDate(currentDate.getDate() - batchSize)
         }
         return results
     }
 
-    export function assembleAttributeUrl(attributeNames: string[] | 'all', dateAsIsoString: string): string {
+    // Fetches paginated pages recursively. It's not optimal, but it's simple.
+    function fetchAllPages(url: string, token: string): ExistAttributesApiResponse {
+        const response = fetchUrlViaHttpGetWithToken(url, token)
+        if (response.next) {
+            const nextResponse = fetchAllPages(response.next, token)
+            return {
+                next: null,
+                results: response.results.concat(nextResponse.results),
+            }
+        }
+        return response
+    }
+
+    export function assembleAttributeUrl(
+        attributeNames: string[] | 'all',
+        dateAsIsoString: string,
+        dayCount: number
+    ): string {
         const query = {
             ...(attributeNames === 'all' ? {} : { attributes: attributeNames.join(',') }),
-            limit: 1,
-            page: 1,
+            days: dayCount,
             date_max: dateAsIsoString,
         }
-        return `${baseUrl}users/$self/attributes/?${Object.entries(query)
+        return `${baseUrl}attributes/with-values/?${Object.entries(query)
             .map(([key, value]) => `${key}=${value}`)
             .join('&')}`
     }
 
-    function convertDay(response: ExistAttributesApiResponse): AttributeListForDay {
-        const namesValues = response.map(item => ({
-            name: item.attribute,
-            value: item.values.length ? item.values[0].value : undefined,
+    function convertDay(response: ExistAttributesApiResponse, isoDate: string): AttributeListForDay {
+        const namesValues = response.results.map(item => ({
+            name: item.name,
+            value: item.values.length ? item.values.find(value => value.date === isoDate).value : undefined,
             type: item.value_type_description,
         }))
         const namesValuesFiltered = namesValues.filter(a => a.value !== undefined)
