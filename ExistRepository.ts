@@ -43,11 +43,10 @@ export namespace ExistRepository {
      */
     export function getAttributeLists(
         token: string,
-        attributeNames: string[] | 'all',
         dayCount: number,
-        lastDate?: Date
+        attributeNames: string[] | 'all' = 'all',
+        lastDate: Date = new Date()
     ): { [dateAsIsoString: string]: AttributeListForDay } {
-        lastDate = lastDate || new Date()
         const results = {}
         const date = lastDate
         while (Object.keys(results).length < dayCount) {

@@ -63,6 +63,6 @@ function fillMissingBookInfo(): void {
 function fillExistDiaryItems(): void {
     const token = ExistRepository.doSimpleTokenAuthentication(existUsername, existPassword)
     const sheet = SpreadsheetApp.getActive().getSheetByName('Exist')
-    const attributeLists = ExistRepository.getAttributeLists(token, 'all', 14)
+    const attributeLists = ExistRepository.getAttributeLists(token, 14, 'all', new Date())
     ExistDownloader.fillMissingDatesOnSheet(sheet, attributeLists)
 }
