@@ -1,5 +1,8 @@
-import { ExistDownloader } from './ExistDownloader'
-import { ExistRepository } from './ExistRepository'
+import { AylienDownloader } from './articles/AylienDownloader'
+import { GoodreadsDownloader } from './books/GoodreadsDownloader'
+import { ExistDownloader } from './diary/ExistDownloader'
+import { ExistRepository } from './diary/ExistRepository'
+import { OmdbDownloader } from './movies/OmdbDownloader'
 
 const aylienApplicationID = PropertiesService.getScriptProperties().getProperty('aylienApplicationID')
 const aylienApplicationKey = PropertiesService.getScriptProperties().getProperty('aylienApplicationKey')
@@ -10,8 +13,7 @@ const omdbApiKey = PropertiesService.getScriptProperties().getProperty('omdbApiK
 
 const backgroundColor = '#d88'
 
-// noinspection JSUnusedLocalSymbols
-function onOpen(): void {
+export function onOpen(): void {
     SpreadsheetApp.getUi()
         .createMenu('Scripts')
         .addItem('Fill missing movie info for movie queue', 'fillMissingMovieQueueInfo')
@@ -23,7 +25,7 @@ function onOpen(): void {
         .addToUi()
 }
 
-function fillMissingMovieReviewInfo(): void {
+export function fillMissingMovieReviewInfo(): void {
     OmdbDownloader.fillMissingMovieInfoOnSheet(
         omdbApiKey,
         820, // 1-based
@@ -32,7 +34,7 @@ function fillMissingMovieReviewInfo(): void {
     )
 }
 
-function fillMissingMovieQueueInfo(): void {
+export function fillMissingMovieQueueInfo(): void {
     OmdbDownloader.fillMissingMovieInfoOnSheet(
         omdbApiKey,
         7, // 1-based
@@ -41,7 +43,7 @@ function fillMissingMovieQueueInfo(): void {
     )
 }
 
-function fillMissingArticleInfo(): void {
+export function fillMissingArticleInfo(): void {
     AylienDownloader.fillMissingInfo(
         aylienApplicationID,
         aylienApplicationKey,
@@ -51,7 +53,7 @@ function fillMissingArticleInfo(): void {
     )
 }
 
-function fillMissingBookInfo(): void {
+export function fillMissingBookInfo(): void {
     GoodreadsDownloader.fillMissingBookInfoOnSheet(
         goodreadsApiKey,
         7,
@@ -60,7 +62,7 @@ function fillMissingBookInfo(): void {
     )
 }
 
-function fillExistDiaryItems(): void {
+export function fillExistDiaryItems(): void {
     const token = ExistRepository.doSimpleTokenAuthentication(existUsername, existPassword)
     const sheet = SpreadsheetApp.getActive().getSheetByName('Exist')
     const attributeLists = ExistRepository.getAttributeLists(token, 14, 'all', new Date())

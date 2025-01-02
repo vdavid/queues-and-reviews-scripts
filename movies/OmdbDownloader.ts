@@ -1,4 +1,4 @@
-namespace OmdbDownloader {
+export namespace OmdbDownloader {
     import Range = GoogleAppsScript.Spreadsheet.Range
     import Sheet = GoogleAppsScript.Spreadsheet.Sheet
 

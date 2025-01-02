@@ -1,4 +1,4 @@
-namespace GoodreadsDownloader {
+export namespace GoodreadsDownloader {
     import Sheet = GoogleAppsScript.Spreadsheet.Sheet
     import Range = GoogleAppsScript.Spreadsheet.Range
 

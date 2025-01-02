@@ -1,4 +1,4 @@
-namespace AylienDownloader {
+export namespace AylienDownloader {
     import Sheet = GoogleAppsScript.Spreadsheet.Sheet
 
     interface AylienResponse {

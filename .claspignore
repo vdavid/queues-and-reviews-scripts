@@ -15,4 +15,4 @@ node_modules/**
 # also ignore these:
 .eslintrc.js
 *.config.js
-*.test.ts
+**/*.test.ts
