@@ -10,6 +10,7 @@ Uses these inputs from script properties:
 - existPassword
 - goodreadsApiKey
 - omdbApiKey
+- geminiApiKey
 
 The target spreadsheet is [here](https://docs.google.com/spreadsheets/d/15ccFkUaWRUZtLk0C0dT8EN9qYWf_1aah0WoD4ii5rpQ/edit#).
 
@@ -27,7 +28,7 @@ Uses Goodreads API to get the metadata for books.
 ### Diary
 
 - Downloads the diary from Exist.io.
-- Uses Gemini (models/gemini-2.0-flash-exp) to parse some aspects of the diary.
+- Uses Gemini ([models/gemini-2.0-flash-exp](https://ai.google.dev/gemini-api/docs/models/gemini#gemini-2.0-flash)) to parse some aspects of the diary.
 
 ### Movies
 

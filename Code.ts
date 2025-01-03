@@ -3,6 +3,7 @@ import { AylienDownloader } from './articles/AylienDownloader'
 import { GoodreadsDownloader } from './books/GoodreadsDownloader'
 import { ExistDownloader } from './diary/ExistDownloader'
 import { ExistRepository } from './diary/ExistRepository'
+import { LujzaSicknessChecker } from './diary/LujzaSicknessChecker'
 import { OmdbDownloader } from './movies/OmdbDownloader'
 
 const aylienApplicationID = PropertiesService.getScriptProperties().getProperty('aylienApplicationID')
@@ -11,6 +12,9 @@ const existUsername = PropertiesService.getScriptProperties().getProperty('exist
 const existPassword = PropertiesService.getScriptProperties().getProperty('existPassword')
 const goodreadsApiKey = PropertiesService.getScriptProperties().getProperty('goodreadsApiKey')
 const omdbApiKey = PropertiesService.getScriptProperties().getProperty('omdbApiKey')
+const geminiApiKey = PropertiesService.getScriptProperties().getProperty('geminiApiKey')
+const queuesAndReviewsUrl = PropertiesService.getScriptProperties().getProperty('queuesAndReviewsUrl')
+const articleReviewsSheetId = PropertiesService.getScriptProperties().getProperty('articleReviewsSheetId')
 
 const backgroundColor = '#d88'
 
@@ -22,6 +26,7 @@ export function onOpen(): void {
         .addItem('Fill missing info for article reviews', 'fillMissingArticleInfo')
         .addItem('Fill missing info for fiction books', 'fillMissingBookInfo')
         .addItem('Update last 7 days Exist data', 'fillExistDiaryItems')
+        .addItem("Check Lujza's sickness for selection", 'checkLujzaSickness')
         // .addItem('Export all articles in JSON', 'exportAllArticlesInJson') // Deployed as a web app here: https://script.google.com/macros/s/AKfycby6iNqW8-KWFiudJqWZEiGR-nRa38sJ0uMDs7-Da4KFlZ4gRKM/exec?limit=5
         .addToUi()
 }
@@ -68,6 +73,12 @@ export function fillExistDiaryItems(): void {
     const sheet = SpreadsheetApp.getActive().getSheetByName('Exist')
     const attributeLists = ExistRepository.getAttributeLists(token, 14, 'all', new Date())
     ExistDownloader.fillMissingDatesOnSheet(sheet, attributeLists)
+}
+
+export function checkLujzaSickness(): void {
+    const sheet = SpreadsheetApp.getActive().getSheetByName('Exist')
+    const range = sheet.getRange('A1383:B1498') // Set the range to fill here. Must be A:B.
+    LujzaSicknessChecker.checkSickness(sheet, range, geminiApiKey, 9) // Allows max 10 calls per minute to the Gemini API.
 }
 
 // Web app entry point. See https://developers.google.com/apps-script/guides/web for details.
