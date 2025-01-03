@@ -17,7 +17,8 @@ The target spreadsheet is [here](https://docs.google.com/spreadsheets/d/15ccFkUa
 
 ### Articles
 
-Uses Aylien API to get the metadata for articles.
+- Uses Aylien API to get the metadata for articles.
+- Has a webapp deployed to make the article reviews available in JSON. See it [here](https://script.google.com/macros/s/AKfycby6iNqW8-KWFiudJqWZEiGR-nRa38sJ0uMDs7-Da4KFlZ4gRKM/exec). I dont think it's actually used, though. veszelovszki.com/r uses the Google Sheets API directly.
 
 ### Books
 

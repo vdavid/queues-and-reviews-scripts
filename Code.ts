@@ -1,3 +1,4 @@
+import { ArticleJsonExporter } from './articles/ArticleJsonExporter'
 import { AylienDownloader } from './articles/AylienDownloader'
 import { GoodreadsDownloader } from './books/GoodreadsDownloader'
 import { ExistDownloader } from './diary/ExistDownloader'
@@ -67,4 +68,32 @@ export function fillExistDiaryItems(): void {
     const sheet = SpreadsheetApp.getActive().getSheetByName('Exist')
     const attributeLists = ExistRepository.getAttributeLists(token, 14, 'all', new Date())
     ExistDownloader.fillMissingDatesOnSheet(sheet, attributeLists)
+}
+
+// Web app entry point. See https://developers.google.com/apps-script/guides/web for details.
+// To use this script, publish it as a web app, and then visit the URL provided.
+export function doGet(event: GoogleAppsScript.Events.DoGet): GoogleAppsScript.Content.TextOutput {
+    const sheet = SpreadsheetApp.openByUrl(queuesAndReviewsUrl)
+        .getSheets()
+        .find(sheet => sheet.getSheetId() === parseInt(articleReviewsSheetId, 10)) // Sheet "📰⭐", but it didn't seem to work by name.
+    const data = sheet.getRange('A7:M').getValues()
+    const articles = ArticleJsonExporter.parseRaw(data, parseInt(event.parameter.limit ?? '0', 10))
+    return ContentService.createTextOutput(JSON.stringify(articles)).setMimeType(ContentService.MimeType.JSON)
+}
+
+// Test function for the web app.
+export function testDoGet(): void {
+    const textOutput = doGet({
+        queryString: 'limit=5',
+        parameter: {
+            limit: '5',
+        },
+        contextPath: '',
+        parameters: {
+            limit: ['5'],
+        },
+        contentLength: -1,
+        pathInfo: '',
+    })
+    Logger.log(textOutput.getContent())
 }
