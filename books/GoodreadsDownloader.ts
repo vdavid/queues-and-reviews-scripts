@@ -51,9 +51,9 @@ export namespace GoodreadsDownloader {
         return xmlContent.toString()
     }
 
-    function convertGoodreadsDataToCellValues(xmlContent): string[] {
+    function convertGoodreadsDataToCellValues(xmlContent: string): string[] {
         const id = getGoodreadsIdFromXml(xmlContent)
-        return [getGoodreadsUrl(id) || '']
+        return [getGoodreadsUrl(id ?? '') || '']
     }
 
     function getGoodreadsIdFromUrl(goodreadsLink: string): string | null {

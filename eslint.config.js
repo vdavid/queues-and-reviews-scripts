@@ -359,7 +359,7 @@ export default [
         },
     },
     {
-        files: ['**/*.d.ts', 'eslint.config.js'],
+        files: ['**/*.d.ts', 'eslint.config.js', 'prettier.config.js'],
         languageOptions: {
             parser: tsParser,
             parserOptions: {

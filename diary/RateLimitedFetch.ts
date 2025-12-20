@@ -12,6 +12,7 @@ type RateLimitedFetch = (
     options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions
 ) => GoogleAppsScript.URL_Fetch.HTTPResponse
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function createRateLimitedFetch(config: RateLimitedFetchConfig): RateLimitedFetch {
     const state = {
         lastCallTime: Date.now(),
@@ -36,7 +37,7 @@ function createRateLimitedFetch(config: RateLimitedFetchConfig): RateLimitedFetc
         // Check if rate limit reached
         if (state.callCount >= state.callsPerMinute) {
             const waitTime = oneMinute - (now - state.resetTime)
-            console.log(`Rate limit reached. Waiting ${waitTime / 1000} s.`)
+            Logger.log(`Rate limit reached. Waiting ${waitTime / 1000} s.`)
             Utilities.sleep(waitTime)
             state.callCount = 0
             state.resetTime = Date.now()

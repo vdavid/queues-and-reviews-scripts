@@ -80,7 +80,7 @@ export namespace OmdbDownloader {
         const url = `https://www.omdbapi.com/?apikey=${apiKey}${title ? `&t=${title}` : ''}${year ? `&y=${year}` : ''}${
             imdbId ? `&i=${imdbId}` : ''
         }`
-        return JSON.parse(UrlFetchApp.fetch(url).getContentText())
+        return JSON.parse(UrlFetchApp.fetch(url).getContentText()) as OmdbResponse
     }
 
     function toCellValues(omdbData: OmdbResponse): (string | number)[] {

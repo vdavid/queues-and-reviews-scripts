@@ -25,7 +25,7 @@ interface ExistAttribute {
         {
             date: string // YYYY-MM-DD
             value: string | number | null
-        }
+        },
     ]
 }
 
@@ -56,7 +56,7 @@ export namespace ExistRepository {
         token: string,
         dayCount: number,
         attributeNames: string[] | 'all' = 'all',
-        lastDate: Date = new Date()
+        lastDate: Date = new Date(),
     ): { [dateAsIsoString: string]: AttributeListForDay } {
         const results = {}
         const currentDate = lastDate
@@ -68,7 +68,7 @@ export namespace ExistRepository {
             // Fetch data for the next batch of days
             const response = fetchAllPages(url, token)
             const daysInResponse: string[] = response.results
-                .map(result => result.values.map(value => value.date))
+                .map((result) => result.values.map((value) => value.date))
                 .flat()
                 .filter((value, index, self) => self.indexOf(value) === index)
             for (const isoDate of daysInResponse) {
@@ -101,7 +101,7 @@ export namespace ExistRepository {
     export function assembleAttributeUrl(
         attributeNames: string[] | 'all',
         dateAsIsoString: string,
-        dayCount: number
+        dayCount: number,
     ): string {
         const query = {
             ...(attributeNames === 'all' ? {} : { attributes: attributeNames.join(',') }),
@@ -114,22 +114,23 @@ export namespace ExistRepository {
     }
 
     function convertDay(response: ExistAttributesApiResponse, isoDate: string): AttributeListForDay {
-        const namesValues = response.results.map(item => ({
+        const namesValues = response.results.map((item) => ({
             name: item.name,
             value: item.values.length
-                ? (item.values.find(value => value.date === isoDate) || { value: undefined }).value
+                ? (item.values.find((value) => value.date === isoDate) ?? { value: undefined }).value
                 : undefined,
             type: item.value_type_description,
         }))
-        const namesValuesFiltered = namesValues.filter(a => a.value !== undefined)
-        return namesValuesFiltered.reduce((result, item) => {
+        const namesValuesFiltered = namesValues.filter((a) => a.value !== undefined)
+        const result: AttributeListForDay = {}
+        for (const item of namesValuesFiltered) {
             result[item.name] = { value: item.value, type: item.type }
-            return result
-        }, {})
+        }
+        return result
     }
 
     function fetchUrlViaHttpGetWithToken(url: string, token: string): ExistAttributesApiResponse {
         const response = UrlFetchApp.fetch(url, { method: 'get', headers: { Authorization: 'Token ' + token } })
-        return JSON.parse(response.getContentText())
+        return JSON.parse(response.getContentText()) as ExistAttributesApiResponse
     }
 }

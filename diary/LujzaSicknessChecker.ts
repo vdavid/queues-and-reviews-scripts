@@ -112,10 +112,10 @@ export namespace LujzaSicknessChecker {
         }
 
         try {
-            const httpResponse = rateLimitedFetch(url, options) as GoogleAppsScript.URL_Fetch.HTTPResponse
+            const httpResponse = rateLimitedFetch(url, options)
             if (httpResponse.getResponseCode() !== 200) {
                 const errorMessage = `Gemini returned status code ${httpResponse.getResponseCode()} with content: ${httpResponse.getContentText()}`
-                console.error(errorMessage)
+                Logger.log(errorMessage)
                 return {
                     skippedPreschool: false,
                     explanation: errorMessage,
@@ -175,7 +175,7 @@ More details:
             responseData = JSON.parse(response) as { candidates: { content: { parts: { text: string }[] } }[] }
         } catch (error) {
             const errorMessage = `Error parsing response: ${error}. Response: ${response}`
-            console.error(errorMessage)
+            Logger.log(errorMessage)
             return { skippedPreschool: false, explanation: errorMessage }
         }
 
@@ -193,7 +193,7 @@ More details:
             parsed = JSON.parse(text) as LlmResult
         } catch (error) {
             const errorMessage = `Error parsing response: ${error}. Original text: ${responseData?.candidates[0]?.content?.parts[0]?.text}, text: ${text}`
-            console.error(errorMessage)
+            Logger.log(errorMessage)
             return {
                 skippedPreschool: false,
                 explanation: errorMessage,

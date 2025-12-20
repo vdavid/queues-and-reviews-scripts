@@ -87,7 +87,7 @@ export function doGet(event: GoogleAppsScript.Events.DoGet): GoogleAppsScript.Co
     const sheet = SpreadsheetApp.openByUrl(queuesAndReviewsUrl)
         .getSheets()
         .find(sheet => sheet.getSheetId() === parseInt(articleReviewsSheetId, 10)) // Sheet "📰⭐", but it didn't seem to work by name.
-    const data = sheet.getRange('A7:M').getValues()
+    const data = sheet.getRange('A7:M').getValues() as string[][]
     const articles = ArticleJsonExporter.parseRaw(data, parseInt(event.parameter.limit ?? '0', 10))
     return ContentService.createTextOutput(JSON.stringify(articles)).setMimeType(ContentService.MimeType.JSON)
 }

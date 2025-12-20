@@ -17,7 +17,7 @@ export namespace AylienDownloader {
 
     const mostCommonEnglishWords =
         'the,be,to,of,and,a,in,that,have,I,it,for,not,on,with,he,as,you,do,at,this,but,his,by,from,they,we,say,her,she,or,an,will,my,one,all,would,there,their,what,so,up,out,if,about,who,get,which,go,me,when,make,can,like,time,no,just,him,know,take,people,into,year,your,good,some,could,them,see,other,than,then,now,look,only,come,its,over,think,also,back,after,use,two,how,our,work,first,well,way,even,new,want,because,any,these,give,day,most,us,why'.split(
-            ','
+            ',',
         )
 
     export function fillMissingInfo(
@@ -25,7 +25,7 @@ export namespace AylienDownloader {
         appKey: string,
         firstLineIndex: number,
         backgroundColor: string,
-        sheet: Sheet
+        sheet: Sheet,
     ): void {
         const input = sheet.getRange(`C${firstLineIndex}:H`).getValues() as string[][]
         for (let rowIndex = 0; rowIndex < input.length; rowIndex++) {
@@ -67,9 +67,9 @@ export namespace AylienDownloader {
         appId: string,
         appKey: string,
         endpoint: string,
-        parameters: { articleUrl: string }
+        parameters: { articleUrl: string },
     ): AylienResponse {
-        return JSON.parse(
+        const response = JSON.parse(
             UrlFetchApp.fetch('https://api.aylien.com/api/v1/' + endpoint, {
                 method: 'post',
                 headers: {
@@ -77,8 +77,9 @@ export namespace AylienDownloader {
                     'X-AYLIEN-TextAPI-Application-Key': appKey,
                 },
                 payload: parameters,
-            }).getContentText()
-        )
+            }).getContentText(),
+        ) as AylienResponse
+        return response
     }
 
     function convertArticleDataToCellValues(articleData: ArticleData): (string | number)[] {
@@ -99,8 +100,8 @@ export namespace AylienDownloader {
     }
 
     function guessLanguage(content: string): string {
-        const likelyHU = ['á', 'é', 'í', 'ó', 'ö', 'ő', 'ú', 'ü', 'ű'].some(character => content.includes(character))
-        const likelyEN = mostCommonEnglishWords.some(word => containsWord(content, word))
+        const likelyHU = ['á', 'é', 'í', 'ó', 'ö', 'ő', 'ú', 'ü', 'ű'].some((character) => content.includes(character))
+        const likelyEN = mostCommonEnglishWords.some((word) => containsWord(content, word))
 
         return likelyHU ? (likelyEN ? '' : 'HU') : likelyEN ? 'EN' : ''
     }

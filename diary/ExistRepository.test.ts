@@ -1,5 +1,7 @@
 import { ExistRepository } from './ExistRepository'
 
+declare const global: typeof globalThis
+
 const responsePages = [
     {
         count: 54,
@@ -88,7 +90,7 @@ const responsePages = [
 ]
 
 let mockPageIndex = 0
-global.UrlFetchApp = {
+;(global as unknown as Record<string, unknown>).UrlFetchApp = {
     fetch: jest.fn(() => ({
         getContentText: jest.fn(() => JSON.stringify(responsePages[mockPageIndex++])),
     })),
@@ -113,7 +115,10 @@ describe('ExistRepository', () => {
     it('can get attribute lists', () => {
         const attributeLists = ExistRepository.getAttributeLists('token', 2, 'all', new Date('2022-10-14'))
 
-        expect(global.UrlFetchApp.fetch).toHaveBeenCalledTimes(3)
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
+        const urlFetchFetch = (global as any).UrlFetchApp?.fetch
+        expect(urlFetchFetch).toBeDefined()
+        expect(urlFetchFetch).toHaveBeenCalledTimes(3)
         expect(attributeLists).toHaveProperty('2022-10-14')
         expect(attributeLists).toHaveProperty('2022-10-13')
         expect(attributeLists['2022-10-14']).toHaveProperty('mood')
