@@ -1,27 +1,15 @@
- 
-module.exports = {
-  tabWidth: 4,
-  printWidth: 120,
-  proseWrap: 'preserve',
-  semi: false,
-  trailingComma: 'es5',
-  singleQuote: true,
-  arrowParens: 'avoid',
-  overrides: [
-    {
-      files: '{*.js?(on),*.y?(a)ml,.*.js?(on),.*.y?(a)ml,*.md,.prettierrc,.stylelintrc,.babelrc}',
-      options: {
-        tabWidth: 2,
-      },
-    },
-    {
-      files: '{,**/tsconfig.json,**/tsconfig.*.json}',
-      options: {
-        parser: 'json5',
-        quoteProps: 'preserve',
-        singleQuote: false,
-        trailingComma: 'all',
-      },
-    },
-  ],
+export default {
+    tabWidth: 4,
+    useTabs: false,
+    semi: false,
+    singleQuote: true,
+    quoteProps: 'as-needed',
+    jsxSingleQuote: true,
+    trailingComma: 'all',
+    bracketSpacing: true,
+    bracketSameLine: false,
+    arrowParens: 'always',
+    endOfLine: 'lf',
+    printWidth: 120,
+    proseWrap: 'always',
 }
