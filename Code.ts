@@ -34,7 +34,7 @@ export function onOpen(): void {
 export function fillMissingMovieReviewInfo(): void {
     OmdbDownloader.fillMissingMovieInfoOnSheet(
         omdbApiKey,
-        820, // 1-based
+        1000, // 1-based
         backgroundColor,
         SpreadsheetApp.getActive().getSheetByName('🎬⭐')
     )
@@ -43,9 +43,9 @@ export function fillMissingMovieReviewInfo(): void {
 export function fillMissingMovieQueueInfo(): void {
     OmdbDownloader.fillMissingMovieInfoOnSheet(
         omdbApiKey,
-        7, // 1-based
+        170, // 1-based
         backgroundColor,
-        SpreadsheetApp.getActive().getSheetByName('🎬📃')
+        SpreadsheetApp.getActive().getSheetByName('🎬💡')
     )
 }
 
