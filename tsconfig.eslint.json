@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
     "noEmit": true,
-    "allowJs": true
+    "allowJs": true,
+    "strictNullChecks": true
   },
   "extends": "./tsconfig.json",
-  "include": ["./*", ".eslintrc.js"]
+  "include": ["./**/*.ts", "./**/*.tsx", "./**/*.js", "eslint.config.js"]
 }

@@ -1,6 +1,6 @@
 // Add these types and functions before the analyzeSicknessWithLLM function
 
-type RateLimitedFetchConfig = {
+interface RateLimitedFetchConfig {
     callsPerMinute: number
     lastCallTime?: number
     callCount?: number

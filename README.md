@@ -36,9 +36,9 @@ Uses Goodreads API to get the metadata for books.
 
 ## Development
 
-- Use `yarn watch` to start watching files.
+- Use `pnpm watch` to start watching files.
 - Go to the [script](https://script.google.com/home/projects/1PG2YTlZFJUzIvlgZOqXoK0RzmpLKs8jT-9XJuJXZnN6toD8FBoN4eQMS/edit) to run it
 
 ## Deployment
 
-- Use `yarn push` for a single deploy. (This is included in `yarn watch`.)
+- Use `pnpm push` for a single deploy. (This is included in `pnpm watch`.)
