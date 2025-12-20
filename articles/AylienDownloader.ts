@@ -69,7 +69,7 @@ export namespace AylienDownloader {
         endpoint: string,
         parameters: { articleUrl: string },
     ): AylienResponse {
-        const response = JSON.parse(
+        return JSON.parse(
             UrlFetchApp.fetch('https://api.aylien.com/api/v1/' + endpoint, {
                 method: 'post',
                 headers: {
@@ -79,7 +79,6 @@ export namespace AylienDownloader {
                 payload: parameters,
             }).getContentText(),
         ) as AylienResponse
-        return response
     }
 
     function convertArticleDataToCellValues(articleData: ArticleData): (string | number)[] {
