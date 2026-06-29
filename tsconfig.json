@@ -1,8 +1,10 @@
 {
   "compilerOptions": {
-    "lib": [
-      "esnext"
-    ],
-    "experimentalDecorators": true
+    "target": "es2019",
+    "lib": ["esnext"],
+    "experimentalDecorators": true,
+    "esModuleInterop": true,
+    "strict": false,
+    "types": ["google-apps-script", "jest"]
   }
 }

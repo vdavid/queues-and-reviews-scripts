@@ -94,7 +94,7 @@ let mockPageIndex = 0
     fetch: jest.fn(() => ({
         getContentText: jest.fn(() => JSON.stringify(responsePages[mockPageIndex++])),
     })),
-} as unknown as GoogleAppsScript.URL_Fetch.UrlFetchApp
+}
 
 describe('ExistRepository', () => {
     it('can assemble attribute URL with attribute list', () => {

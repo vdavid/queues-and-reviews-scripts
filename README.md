@@ -2,9 +2,12 @@
 
 This is a project to automate things around my Queues and Reviews sheet in Google Sheets.
 
-It uses Google Apps Script, TypeScript, pnpm, and Jest.
-It uses Clasp v2.x because 3.x doesn't seem to work with Node 25+ which I had the last time I worked on this.
-I've just reported that issue here: https://github.com/google/clasp/issues/1106
+It uses Google Apps Script, TypeScript, pnpm, and Jest. Node is pinned to 26 via mise (`.mise.toml`).
+
+esbuild (with `esbuild-gas-plugin`) bundles everything into a single `dist/Code.js`, which clasp v3 pushes. The
+bundler hoists every entry point (`onOpen`, `doGet`, the `fillMissing…` functions, `fillExistDiaryItems`, and
+`checkLujzaSickness`) to the global scope that Google Apps Script needs for menus, triggers, and the web app. See
+`build.mjs`.
 
 ## Environment
 
@@ -42,11 +45,11 @@ Uses Goodreads API to get the metadata for books.
 
 ## Development
 
-- Use `pnpm watch` to start watching files.
-- Go to the [script](https://script.google.com/home/projects/1PG2YTlZFJUzIvlgZOqXoK0RzmpLKs8jT-9XJuJXZnN6toD8FBoN4eQMS/edit) to run it
-- Use `pnpm format && pnpm tsc --noEmit && pnpm lint --fix && pnpm test` to ensure everything is correct before
-  committing to the repo and pushing to Google Apps Script.
+- Build the bundle with `pnpm build` (writes `dist/Code.js` and copies `appsscript.json`).
+- Go to the [script](https://script.google.com/home/projects/1PG2YTlZFJUzIvlgZOqXoK0RzmpLKs8jT-9XJuJXZnN6toD8FBoN4eQMS/edit) to run it.
+- Run `pnpm typecheck && pnpm lint:fix && pnpm test` to check everything before committing and pushing.
 
 ## Deployment
 
-- Use `pnpm push` for a single deploy. (This is included in `pnpm watch`.)
+- Use `pnpm push` to build and push to Google Apps Script.
+- Use `pnpm deploy` to build, push, and create a new versioned deployment.
