@@ -1,5 +1,5 @@
 export namespace AylienDownloader {
-    import Sheet = GoogleAppsScript.Spreadsheet.Sheet
+    type Sheet = GoogleAppsScript.Spreadsheet.Sheet
 
     interface AylienResponse {
         author: string

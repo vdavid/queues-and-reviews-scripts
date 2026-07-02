@@ -1,6 +1,6 @@
 export namespace OmdbDownloader {
-    import Range = GoogleAppsScript.Spreadsheet.Range
-    import Sheet = GoogleAppsScript.Spreadsheet.Sheet
+    type Range = GoogleAppsScript.Spreadsheet.Range
+    type Sheet = GoogleAppsScript.Spreadsheet.Sheet
 
     interface OmdbResponse {
         Title: string // "Matrix",

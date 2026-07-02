@@ -1,6 +1,6 @@
 export namespace LujzaSicknessChecker {
-    import Sheet = GoogleAppsScript.Spreadsheet.Sheet
-    import Range = GoogleAppsScript.Spreadsheet.Range
+    type Sheet = GoogleAppsScript.Spreadsheet.Sheet
+    type Range = GoogleAppsScript.Spreadsheet.Range
 
     /**
      * This interface stores the final result from the LLM call:

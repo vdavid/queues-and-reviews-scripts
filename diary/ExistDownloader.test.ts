@@ -1,6 +1,6 @@
 import { ExistDownloader } from './ExistDownloader'
 
-import Sheet = GoogleAppsScript.Spreadsheet.Sheet
+type Sheet = GoogleAppsScript.Spreadsheet.Sheet
 
 describe('ExistDownloader', () => {
     it('fills missing dates on sheet', () => {

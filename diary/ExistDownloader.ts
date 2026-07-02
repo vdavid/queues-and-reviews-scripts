@@ -1,6 +1,6 @@
 import { ExistRepository } from './ExistRepository'
 
-import Sheet = GoogleAppsScript.Spreadsheet.Sheet
+type Sheet = GoogleAppsScript.Spreadsheet.Sheet
 
 export namespace ExistDownloader {
     export function fillMissingDatesOnSheet(

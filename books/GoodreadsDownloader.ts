@@ -1,6 +1,6 @@
 export namespace GoodreadsDownloader {
-    import Sheet = GoogleAppsScript.Spreadsheet.Sheet
-    import Range = GoogleAppsScript.Spreadsheet.Range
+    type Sheet = GoogleAppsScript.Spreadsheet.Sheet
+    type Range = GoogleAppsScript.Spreadsheet.Range
 
     export function fillMissingBookInfoOnSheet(
         apiKey: string,
